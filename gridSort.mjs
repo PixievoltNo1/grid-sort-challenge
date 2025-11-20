@@ -1,11 +1,13 @@
 export function gridSort(/** @type number[] */ list) {
-	/** @type Map<number, number> */ let occurences = new Map();
+	// Create a sorted list of identical sets of numbers
+	/** @type Map<number, number> */ let occurrences = new Map();
 	for (let num of list) {
-		occurences.set(num, 1 + (occurences.get(num) ?? 0));
+		occurrences.set(num, 1 + (occurrences.get(num) ?? 0));
 	}
-	/** @type [number, number][] */ let sortedOccurences = [...occurences.entries()];
-	sortedOccurences.sort( ([a], [b]) => a - b );
+	/** @type [number, number][] */ let sortedOccurrences = [...occurrences.entries()];
+	sortedOccurrences.sort( ([a], [b]) => a - b );
 
+	// Create the stripe representation of the grid
 	/** Number of diagonal stripes on either side of grid's diagonal, equal to grid size - 1 */
 	let hemisphereSize = 5;
 	/** @type number[][] */ let stripes = Array(hemisphereSize * 2 + 1);
@@ -19,7 +21,7 @@ export function gridSort(/** @type number[] */ list) {
 	// Fill the bottom-right corner until we reach the diagonal
 	let currentStripe = 0;
 	while (currentStripe < hemisphereSize) {
-		let [num, quantity] = sortedOccurences.shift();
+		let [num, quantity] = sortedOccurrences.shift();
 		if (quantity > stripeCapacities[currentStripe]) {
 			success = false;
 		}
@@ -34,8 +36,8 @@ export function gridSort(/** @type number[] */ list) {
 	let fillMeetStripe = stripes[currentStripe], fillMeetReverseIndex = fillMeetStripe.length;
 	// Fill the top-left corner through the diagonal
 	currentStripe = stripes.length - 1;
-	while (sortedOccurences.length) {
-		let [num, quantity] = sortedOccurences.pop();
+	while (sortedOccurrences.length) {
+		let [num, quantity] = sortedOccurrences.pop();
 		if (quantity > stripeCapacities[currentStripe]) {
 			success = false;
 		}
@@ -49,6 +51,7 @@ export function gridSort(/** @type number[] */ list) {
 	// Bottom-right fill pushed low numbers, top-left fill unshifted high numbers, so swap them
 	fillMeetStripe?.unshift( ...fillMeetStripe.splice(-1 * fillMeetReverseIndex) );
 
+	// Convert the stripe representation of the grid to the grid proper
 	/** @type number[][] */ let grid = Array(6);
 	for (let i = 0; i < grid.length; i++) {
 		grid[i] = Array(6);
