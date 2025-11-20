@@ -15,10 +15,14 @@ export function gridSort(/** @type number[] */ list) {
 		stripeCapacities[i] = Math.min(i + 1, stripes.length - i);
 	}
 
-	// Placeholder algorithm for filling stripes
+	let success = true;
+	// Fill the bottom-right corner until we reach the diagonal
 	let currentStripe = 0;
-	while (sortedOccurences.length) {
+	while (currentStripe < hemisphereSize) {
 		let [num, quantity] = sortedOccurences.shift();
+		if (quantity > stripeCapacities[currentStripe]) {
+			success = false;
+		}
 		for (let i = 0; i < quantity; i++) {
 			stripes[currentStripe].push(num);
 			if (stripes[currentStripe].length == stripeCapacities[currentStripe]) {
@@ -26,6 +30,24 @@ export function gridSort(/** @type number[] */ list) {
 			}
 		}
 	}
+	// Save where the two fills will meet
+	let fillMeetStripe = stripes[currentStripe], fillMeetReverseIndex = fillMeetStripe.length;
+	// Fill the top-left corner through the diagonal
+	currentStripe = stripes.length - 1;
+	while (sortedOccurences.length) {
+		let [num, quantity] = sortedOccurences.pop();
+		if (quantity > stripeCapacities[currentStripe]) {
+			success = false;
+		}
+		for (let i = 0; i < quantity; i++) {
+			stripes[currentStripe].unshift(num);
+			if (stripes[currentStripe].length == stripeCapacities[currentStripe]) {
+				--currentStripe;
+			}
+		}
+	}
+	// Bottom-right fill pushed low numbers, top-left fill unshifted high numbers, so swap them
+	fillMeetStripe?.unshift( ...fillMeetStripe.splice(-1 * fillMeetReverseIndex) );
 
 	/** @type number[][] */ let grid = Array(6);
 	for (let i = 0; i < grid.length; i++) {
@@ -38,5 +60,5 @@ export function gridSort(/** @type number[] */ list) {
 			grid[startY - i][startX + i] = num;
 		}
 	}
-	return {grid};
+	return {grid, success};
 }
