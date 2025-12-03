@@ -1,5 +1,7 @@
 This is my solution to Stack Overflow's [Challenge #13: Integer sorting in a grid](https://stackoverflow.com/beta/challenges/79811869/challenge-13-integer-sorting-in-a-grid).
 
+**December 2 update:** At [DarthGizka's encouragement](https://stackoverflow.com/beta/challenges/79811869/79825607), I have simplified the algorithm considerably. The key was realizing that *larger* stripes can also borrow from *smaller* stripes, provided we update the "X" in "X >= Y" below to the smaller stripe's capacity, thus allowing every stripe to be filled in a single forward fill. [The old version](https://github.com/PixievoltNo1/grid-sort-challenge/tree/v1) has been tagged in the repo.
+
 # The challenge
 
 > In this challenge, we will sort some numbers onto a 6x6 square grid. Each cell will have one number.
@@ -68,4 +70,4 @@ Essentially what this means is that as long as X >= Y, an X-space stripe can alw
 
 [This JavaScript module](gridSort.mjs) implements a stripe-by-stripe fill of the grid, borrowing spaces from larger stripes as necessary.
 
-This repo includes a [Node.js program](node.mjs) that imports the module and runs every case from the challenge through it. With [Node.js](https://nodejs.org/) installed, it can be run with the command `node node.mjs`. The [output](Node%20Output.txt) is also included in the repo.
+This repo includes a [Node.js program](node.mjs) that imports the module and runs every case from the challenge through it. With [Node.js](https://nodejs.org/) installed, it can be run with the command `node node.mjs`. The [output](Node%20Output.txt) is also included in the repo. **December 2 update:** There's also a "hard mode" program runnable with `node hardMode.mjs`, and [its output](hardMode%20Output.txt). Hard mode uses [the additional tests created by DarthGizka](https://stackoverflow.com/beta/challenges/79811869/79821766), of which every group of 4 has 2 sortable & 2 unsortable lists.

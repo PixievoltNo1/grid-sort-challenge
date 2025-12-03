@@ -17,39 +17,25 @@ export function gridSort(/** @type number[] */ list) {
 		stripeCapacities[i] = Math.min(i + 1, stripes.length - i);
 	}
 
+	// Fill stripes from bottom-right to top-left
 	let success = true;
-	// Fill the bottom-right corner until we reach the diagonal
 	let currentStripe = 0;
-	while (currentStripe < hemisphereSize) {
-		let [num, quantity] = sortedOccurrences.shift();
-		if (quantity > stripeCapacities[currentStripe]) {
-			success = false;
-		}
+	for (let [num, quantity] of sortedOccurrences) {
+		let capacity = stripeCapacities[currentStripe];
 		for (let i = 0; i < quantity; i++) {
 			stripes[currentStripe].push(num);
 			if (stripes[currentStripe].length == stripeCapacities[currentStripe]) {
 				++currentStripe;
+				// If we're about to borrow space from a smaller stripe, use its capacity
+				if (i + 1 < quantity) {
+					capacity = Math.min(capacity, stripeCapacities[currentStripe]);
+				}
 			}
 		}
-	}
-	// Save where the two fills will meet
-	let fillMeetStripe = stripes[currentStripe], fillMeetReverseIndex = fillMeetStripe.length;
-	// Fill the top-left corner through the diagonal
-	currentStripe = stripes.length - 1;
-	while (sortedOccurrences.length) {
-		let [num, quantity] = sortedOccurrences.pop();
-		if (quantity > stripeCapacities[currentStripe]) {
+		if (quantity > capacity) {
 			success = false;
 		}
-		for (let i = 0; i < quantity; i++) {
-			stripes[currentStripe].unshift(num);
-			if (stripes[currentStripe].length == stripeCapacities[currentStripe]) {
-				--currentStripe;
-			}
-		}
 	}
-	// Bottom-right fill pushed low numbers, top-left fill unshifted high numbers, so swap them
-	fillMeetStripe?.unshift( ...fillMeetStripe.splice(-1 * fillMeetReverseIndex) );
 
 	// Convert the stripe representation of the grid to the grid proper
 	/** @type number[][] */ let grid = Array(6);
